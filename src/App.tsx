@@ -99,7 +99,19 @@ const structure = [
 ] as const satisfies Structure
 
 function App() {
+  // There is 2 possibilities when building forms: completely static (the most common case) and highly dynamic.
+  // When it is static then this is the frontend responsability to build the form and send the data correctly to the backend.
+  // But when it is totally dynamic then the backend handles the whole logic: structure, what to display, on what conditions to show it, etc. Front-end is just a UI replicating the logic given by the backend.
+  // So this is my attempt to create a library that will help you to build dynamic forms.
+
+  // First you must provide a `configs` object that will be the dictionary of all the fields that will be displayed.
+  // Second you must provide a `structure` that will be the fields in the wished order and their conditions.
+  // The `structure` is an array of strings and objects.
+  // If the field is a string then it means that it is a simple field that will be displayed.
+  // If the field is a string followed by an object then it means that the followed object is conditionally displayed based on the field value.
   const [form, setForm] = useDynamicForm(configs, structure)
+
+  // Finally you can use the `form` object to render the form.
 
   return form.map((config) => (
     <div key={config.id}>
