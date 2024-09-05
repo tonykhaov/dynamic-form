@@ -1,35 +1,177 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Config, Structure, useDynamicForm } from './useDynamicForm'
+
+const configs: Record<string, Config> = {
+  age: {
+    type: 'text',
+    name: 'age',
+    label: 'Age',
+    placeholder: 'Enter your age',
+    required: true,
+    defaultValue: 0,
+  },
+  name: {
+    type: 'text',
+    name: 'name',
+    label: 'Name',
+    placeholder: 'Enter your name',
+    required: true,
+    defaultValue: 'Tony Khaov',
+  },
+  transaction_id: {
+    type: 'text',
+    name: 'transaction_id',
+    label: 'Transaction ID',
+    placeholder: 'Enter your transaction id',
+    required: true,
+    defaultValue: '',
+  },
+  email: {
+    type: 'email',
+    name: 'email',
+    label: 'Email',
+    placeholder: 'Enter your email',
+    required: true,
+    defaultValue: 'tony.khaov@gmail.com',
+  },
+  password: {
+    type: 'password',
+    name: 'password',
+    label: 'Password',
+    placeholder: 'Enter your password',
+    required: true,
+    defaultValue: '123456',
+  },
+  gender: {
+    type: 'radio',
+    name: 'gender',
+    label: 'Gender',
+    placeholder: 'Select your gender',
+    required: true,
+    defaultValue: 'male',
+    options: [
+      { value: 'male', label: 'Male' },
+      { value: 'female', label: 'Female' },
+      { value: 'other', label: 'Other' },
+    ],
+  },
+}
+const structure = [
+  [
+    'email',
+    {
+      condition: {
+        rule: 'is_not_equal',
+        value: 'tony.khaov@gmail.com',
+      },
+      children: 'email',
+    },
+  ],
+  'name',
+  'password',
+  [
+    'age',
+    {
+      condition: {
+        rule: 'is_less_or_equal_than',
+        value: 12345,
+      },
+      children: [
+        'gender',
+        {
+          condition: {
+            rule: 'is_equal',
+            value: 'male',
+          },
+          children: [
+            'transaction_id',
+            {
+              condition: {
+                rule: 'contains',
+                value: /[0-9]/,
+              },
+              children: 'gender',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+] as const satisfies Structure
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [form, setForm] = useDynamicForm(configs, structure)
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+  return form.map((config) => (
+    <div key={config.id}>
+      <h1>{config.name}</h1>
+      {(() => {
+        switch (config.type) {
+          case 'text':
+            return (
+              <input
+                type={config.type}
+                name={config.name}
+                placeholder={config.placeholder}
+                required={config.required}
+                defaultValue={config.defaultValue}
+                onChange={(e) => setForm((f) => ({ ...f, [config.name]: e.target.value }))}
+              />
+            )
+          case 'email':
+            return (
+              <input
+                type={config.type}
+                name={config.name}
+                placeholder={config.placeholder}
+                required={config.required}
+                defaultValue={config.defaultValue}
+                onChange={(e) => setForm((f) => ({ ...f, [config.name]: e.target.value }))}
+              />
+            )
+          case 'password':
+            return (
+              <input
+                type={config.type}
+                name={config.name}
+                placeholder={config.placeholder}
+                required={config.required}
+                defaultValue={config.defaultValue}
+                onChange={(e) => setForm((f) => ({ ...f, [config.name]: e.target.value }))}
+              />
+            )
+          case 'radio':
+            return config.options.map((option) => (
+              <label key={option.value}>
+                <input
+                  type={config.type}
+                  name={config.name}
+                  placeholder={config.placeholder}
+                  required={config.required}
+                  value={option.value}
+                  defaultChecked={config.defaultValue === option.value}
+                  onChange={(e) => setForm((f) => ({ ...f, [config.name]: e.target.value }))}
+                />
+                {option.label}
+              </label>
+            ))
+
+          case 'number':
+            return (
+              <input
+                type={config.type}
+                name={config.name}
+                placeholder={config.placeholder}
+                required={config.required}
+                defaultValue={config.defaultValue}
+                onChange={(e) => setForm((f) => ({ ...f, [config.name]: e.target.valueAsNumber }))}
+              />
+            )
+          default:
+            return null
+        }
+      })()}
+    </div>
+  ))
 }
 
 export default App
