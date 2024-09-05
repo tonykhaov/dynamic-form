@@ -1,50 +1,20 @@
-# React + TypeScript + Vite
+# Dynamic Form (React)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+There is 2 possibilities when building forms: completely static (the most common case) and highly dynamic.
 
-Currently, two official plugins are available:
+When it is static then this is the frontend responsability to build the form and send the data correctly to the backend.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+But when it is totally dynamic then only the backend handles the logic: structure, what to display, on what conditions
+to show it, etc. Front-end just becomes a dummy UI replicating the logic.
 
-## Expanding the ESLint configuration
+So this is my attempt to create a library that will help you to build dynamic forms.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+First import `useDynamicForm` and call it inside your component.
 
-- Configure the top-level `parserOptions` property like this:
+Then you must provide it with 2 arguments:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- `configs`, an object that will be the dictionary of all the fields that will be displayed.
+- `structure`, an array that will be the fields in the wished order and their conditions. The `structure` is an array of
+  strings and objects. If the field is a string then it means that it is a simple field that will always be displayed.
+  On the other hand if the field is a an array string followed by an object then it means that the object field is
+  conditionally displayed based on the field value (string).
