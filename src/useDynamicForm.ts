@@ -53,6 +53,13 @@ function useDynamicForm(configs: Record<string, Config>, structure: Structure) {
         const input = configs[field]
         if (!input) throw new Error(`Config not found for field: ${field}`)
 
+        // TODO: use a unique id to identify fields
+        const hasDuplicateField = tree.find((field) => field === input.name)
+        if (hasDuplicateField) {
+          throw new Error(
+            `There is already a field with the same name: "${field}". Please use a unique name for each field.`,
+          )
+        }
         const id = field + depth
         finalForm.push({ ...input, id })
         tree.push(field)

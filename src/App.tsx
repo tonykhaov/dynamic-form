@@ -130,6 +130,14 @@ const configs: Record<string, Config> = {
     required: true,
     defaultValue: 'tony.khaov@gmail.com',
   },
+  subEmail: {
+    type: 'email',
+    name: 'subEmail',
+    label: 'Email',
+    placeholder: 'Enter your sub email',
+    required: true,
+    defaultValue: 'subemail.tonykhaov@gmail.com',
+  },
   password: {
     type: 'password',
     name: 'password',
