@@ -75,7 +75,7 @@ function useDynamicForm(configs: Record<string, Config>, structure: Structure) {
           const { condition, children } = fieldWithCondition
           const fieldValue = form[fieldName]
 
-          if (!fieldValue) {
+          if (typeof fieldValue === 'undefined') {
             continue
           }
 
